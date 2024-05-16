@@ -88,14 +88,10 @@ class S3Drive extends StorageDrive
         $this->setDriveSettings($this->drive);
 
         $this->filesystem = Application::getInstance()
-            ->getFilesystem(new AwsS3V3Adapter(new S3Client([
-                'region' => $this->drive_settings[self::REGION],
-                'endpoint' => $this->drive_settings[self::ENDPOINT],
-                'credentials' => [
-                    'key' => $this->drive_settings[self::ACCESS_KEY],
-                    'secret' => $this->drive_settings[self::SECRET_KEY],
-                ],
-            ]), $this->drive_settings[self::BUCKET]));
+            ->getFilesystem(new AwsS3V3Adapter(
+                new S3Client($this->mountClientArguments()),
+                $this->drive_settings[self::BUCKET]
+            ));
     }
 
     /**
@@ -114,5 +110,23 @@ class S3Drive extends StorageDrive
             ->appendRegion()
             ->appendEndpoint()
             ->appendUseSsl();
+    }
+
+    private function mountClientArguments(): array
+    {
+        $arguments = [
+            'region' => $this->drive_settings[self::REGION],
+            'endpoint' => $this->drive_settings[self::ENDPOINT],
+            'credentials' => [
+                'key' => $this->drive_settings[self::ACCESS_KEY],
+                'secret' => $this->drive_settings[self::SECRET_KEY],
+            ],
+        ];
+
+        if (isset($this->drive_settings[self::ENDPOINT]) && !empty($this->drive_settings[self::ENDPOINT])) {
+            $arguments['endpoint'] = $this->drive_settings[self::ENDPOINT];
+        }
+
+        return $arguments;
     }
 }

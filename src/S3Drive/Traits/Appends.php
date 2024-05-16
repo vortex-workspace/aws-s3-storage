@@ -59,7 +59,7 @@ trait Appends
             $this->drive_settings[self::ENDPOINT] ??
             env(
                 S3StorageProvider::ENVIRONMENT_AWS_ENDPOINT,
-                Setting::get('s3.defaults.endpoint', S3StorageProvider::DEFAULT_ENDPOINT)
+                Setting::get('s3.defaults.endpoint')
             );
 
         return $this;
