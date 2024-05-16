@@ -26,7 +26,7 @@ class S3Drive extends StorageDrive
     private ?string $bucket;
     private ?string $region;
     private ?string $endpoint;
-    private bool $use_ssl;
+    private ?bool $use_ssl;
     private array $drive_settings = [];
 
     public function __construct(
