@@ -28,7 +28,7 @@
   "extra": {
     "vortex": {
       "providers": [
-
+        "AwsStorage\\S3StorageProvider"
       ]
     }
   }
