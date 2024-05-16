@@ -46,4 +46,14 @@ class S3Storage extends Storage
     {
         return (new S3Drive(use_ssl: $use_ssl));
     }
+
+    /**
+     * @param string $drive
+     * @return S3Drive
+     * @throws InvalidSettingException
+     */
+    public static function drive(string $drive): S3Drive
+    {
+        return (new S3Drive(drive: $drive));
+    }
 }
