@@ -2,10 +2,15 @@
 
 namespace AwsStorage;
 
+use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
+use AwsStorage\S3Drive\Exceptions\FailedToGetS3Object;
 use AwsStorage\S3Drive\Traits\Appends;
 use AwsStorage\S3Storage\Exceptions\MissingAwsS3Bucket;
+use GuzzleHttp\Exception\ClientException;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToReadFile;
 use MissingAwsS3Setting;
 use Stellar\Boot\Application;
 use Stellar\Settings\Exceptions\InvalidSettingException;
@@ -69,11 +74,28 @@ class S3Drive extends StorageDrive
         return $this;
     }
 
+    /**
+     * @param string $path
+     * @return string|bool
+     * @throws DriveNotDefined
+     * @throws FailedToGetS3Object
+     * @throws InvalidSettingException
+     * @throws MissingAwsS3Bucket
+     * @throws MissingAwsS3Setting
+     */
     public function get(string $path): string|bool
     {
         $this->setupDriveSettings();
 
-        return $this->filesystem->read($path);
+        try {
+            return $this->filesystem->read($path);
+        } catch (FilesystemException|ClientException|S3Exception|UnableToReadFile $exception) {
+            if ($this->exception_mode === true) {
+                throw new FailedToGetS3Object($path, $exception->getMessage());
+            }
+
+            return false;
+        }
     }
 
     /**
