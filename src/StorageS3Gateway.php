@@ -19,8 +19,8 @@ class StorageS3Gateway extends Gateway
         return [
             Method::make(
                 'fromS3',
-                function (Storage $adapter, string $drive) {
-                    return new S3Storage($drive)
+                function (Storage $adapter) {
+                    return new S3Storage();
                 },
             ),
         ];

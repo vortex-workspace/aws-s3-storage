@@ -19,7 +19,7 @@ class S3StorageProvider extends Provider
     public static function gateways(): array
     {
         return [
-
+            StorageS3Gateway::class,
         ];
     }
 }
