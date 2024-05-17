@@ -105,7 +105,7 @@ class S3Drive extends StorageDrive
      * @throws MissingAwsS3Bucket
      * @throws MissingAwsS3Setting
      */
-    private function setupDriveSettings(): void
+    protected function setupDriveSettings(): void
     {
         $this->setDriveSettings($this->drive);
 
@@ -114,6 +114,9 @@ class S3Drive extends StorageDrive
                 new S3Client($this->mountClientArguments()),
                 $this->drive_settings[self::BUCKET]
             ));
+
+        $this->exception_mode = $this->drive_settings['exception_mode'];
+        $this->drive = $this->drive_settings['drive'];
     }
 
     /**
@@ -131,7 +134,8 @@ class S3Drive extends StorageDrive
             ->appendBucket()
             ->appendRegion()
             ->appendEndpoint()
-            ->appendUseSsl();
+            ->appendUseSsl()
+            ->appendExceptionMode();
     }
 
     private function mountClientArguments(): array

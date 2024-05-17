@@ -84,13 +84,21 @@ trait Appends
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws InvalidSettingException
      */
-    private function appendUseSsl(): void
+    private function appendUseSsl(): static
     {
         $this->drive_settings[self::USE_SSL] = $this->use_ssl ??
             $this->drive_settings[self::USE_SSL] ??
             env(S3StorageProvider::ENVIRONMENT_AWS_USE_SSL, Setting::get('s3.defaults.use_ssl'));
+
+        return $this;
+    }
+
+    private function appendExceptionMode(): void
+    {
+        $this->drive_settings['exception_mode'] = $this->exception_mode ??
+            $this->drive_settings['exception_mode'] ?? true;
     }
 }
