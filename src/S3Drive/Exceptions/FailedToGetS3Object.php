@@ -12,7 +12,7 @@ class FailedToGetS3Object extends Exception
     function __construct(string $path, string $message)
     {
         parent::__construct(
-            "Failed to get Aws S3 object from path [ $path ]. response: [ $message ].",
+            "Failed to get Aws S3 object from path \"$path\". response: \"$message\".",
             ExceptionCode::NON_CATCH_EXCEPTION,
             Level::Error
         );

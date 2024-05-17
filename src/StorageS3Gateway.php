@@ -14,15 +14,20 @@ class StorageS3Gateway extends Gateway
         return Storage::class;
     }
 
-    public static function methods(): array
+    public static function staticMethods(): array
     {
         return [
             Method::make(
                 'fromS3',
-                function (Storage $adapter) {
+                function (Storage $adapter): S3Storage {
                     return new S3Storage();
                 },
             ),
         ];
+    }
+
+    public static function nonStaticMethods(): array
+    {
+        return [];
     }
 }
