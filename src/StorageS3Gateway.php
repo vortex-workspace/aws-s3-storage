@@ -2,16 +2,15 @@
 
 namespace AwsStorage;
 
+use Stellar\Adapters\StorageAdapter;
 use Stellar\Gateway;
 use Stellar\Gateway\Method;
-use Stellar\Storage as StellarStorage;
-use Stellar\Storage\Adapters\Storage;
 
 class StorageS3Gateway extends Gateway
 {
     public static function adapterClass(): string
     {
-        return Storage::class;
+        return StorageAdapter::class;
     }
 
     public static function staticMethods(): array
@@ -19,8 +18,15 @@ class StorageS3Gateway extends Gateway
         return [
             Method::make(
                 'fromS3',
-                function (Storage $adapter): S3Storage {
-                    return new S3Storage();
+                function (
+                    StorageAdapter $adapter,
+                    ?string        $drive = null,
+                    ?string        $bucket = null,
+                    ?string        $region = null,
+                    ?string        $endpoint = null,
+                    ?bool          $use_ssl = null
+                ): S3Drive {
+                    return new S3Drive($drive, $bucket, $region, $endpoint, $use_ssl);
                 },
             ),
         ];
