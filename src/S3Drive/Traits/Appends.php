@@ -2,9 +2,10 @@
 
 namespace AwsStorage\S3Drive\Traits;
 
+
 use AwsStorage\S3Storage\Exceptions\MissingAwsS3Bucket;
+use AwsStorage\S3Storage\Exceptions\MissingAwsS3Setting;
 use AwsStorage\S3StorageProvider;
-use MissingAwsS3Setting;
 use Stellar\Setting;
 use Stellar\Settings\Exceptions\InvalidSettingException;
 

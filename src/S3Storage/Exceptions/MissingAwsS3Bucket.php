@@ -1,6 +1,5 @@
 <?php
 
-
 namespace AwsStorage\S3Storage\Exceptions;
 
 use Monolog\Level;

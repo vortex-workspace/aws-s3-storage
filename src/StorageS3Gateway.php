@@ -19,7 +19,6 @@ class StorageS3Gateway extends Gateway
             Method::make(
                 'fromS3',
                 function (
-                    StorageAdapter $adapter,
                     ?string        $drive = null,
                     ?string        $bucket = null,
                     ?string        $region = null,

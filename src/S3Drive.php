@@ -4,15 +4,20 @@ namespace AwsStorage;
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
+use AwsStorage\S3Drive\Exceptions\FailedToDeleteS3Object;
 use AwsStorage\S3Drive\Exceptions\FailedToGetS3Object;
+use AwsStorage\S3Drive\Exceptions\FailedToGetS3ObjectMimeType;
+use AwsStorage\S3Drive\Exceptions\FailedToGetUrlFromS3Object;
+use AwsStorage\S3Drive\Exceptions\FailedToPutS3Object;
 use AwsStorage\S3Drive\Traits\Appends;
 use AwsStorage\S3Storage\Exceptions\MissingAwsS3Bucket;
+use AwsStorage\S3Storage\Exceptions\MissingAwsS3Setting;
 use GuzzleHttp\Exception\ClientException;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToReadFile;
-use MissingAwsS3Setting;
 use Stellar\Boot\Application;
+use Stellar\Navigation\Stream;
 use Stellar\Settings\Exceptions\InvalidSettingException;
 use Stellar\Storage\Exceptions\DriveNotDefined;
 use Stellar\Storage\StorageDrive;
@@ -96,6 +101,130 @@ class S3Drive extends StorageDrive
 
             return false;
         }
+    }
+
+    /**
+     * @param string $location
+     * @param string|Stream $content
+     * @return bool
+     * @throws DriveNotDefined
+     * @throws FailedToPutS3Object
+     * @throws InvalidSettingException
+     * @throws MissingAwsS3Bucket
+     * @throws MissingAwsS3Setting
+     */
+    public function put(string $location, string|Stream $content): bool
+    {
+        $this->setupDriveSettings();
+
+        try {
+            if ($content instanceof Stream) {
+                $this->filesystem->writeStream($location, $content->getResource());
+
+                return true;
+            }
+
+            $this->filesystem->write($location, $content);
+
+            return true;
+        } catch (FilesystemException|ClientException|S3Exception|UnableToReadFile $exception) {
+            if ($this->exception_mode === true) {
+                throw new FailedToPutS3Object($location, $exception->getMessage());
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * @param string $path
+     * @return bool|string
+     * @throws DriveNotDefined
+     * @throws FailedToGetUrlFromS3Object
+     * @throws InvalidSettingException
+     * @throws MissingAwsS3Bucket
+     * @throws MissingAwsS3Setting
+     */
+    public function url(string $path): bool|string
+    {
+        $this->setupDriveSettings();
+
+        try {
+            return $this->filesystem->publicUrl($path);
+        } catch (FilesystemException|ClientException|S3Exception|UnableToReadFile $exception) {
+            if ($this->exception_mode === true) {
+                throw new FailedToGetUrlFromS3Object($path, $exception->getMessage());
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * @param string $path
+     * @return bool|string
+     * @throws DriveNotDefined
+     * @throws FailedToGetS3ObjectMimeType
+     * @throws InvalidSettingException
+     * @throws MissingAwsS3Bucket
+     * @throws MissingAwsS3Setting
+     */
+    public function mimeType(string $path): bool|string
+    {
+        $this->setupDriveSettings();
+
+        try {
+            return $this->filesystem->mimeType($path);
+        } catch (FilesystemException|ClientException|S3Exception|UnableToReadFile $exception) {
+            if ($this->exception_mode === true) {
+                throw new FailedToGetS3ObjectMimeType($path, $exception->getMessage());
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     * @throws DriveNotDefined
+     * @throws FailedToDeleteS3Object
+     * @throws InvalidSettingException
+     * @throws MissingAwsS3Bucket
+     * @throws MissingAwsS3Setting
+     */
+    public function delete(string $path): bool
+    {
+        $this->setupDriveSettings();
+
+        try {
+            $this->filesystem->delete($path);
+
+            return true;
+        } catch (FilesystemException|ClientException|S3Exception|UnableToReadFile $exception) {
+            if ($this->exception_mode === true) {
+                throw new FailedToDeleteS3Object($path, $exception->getMessage());
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param string|null $partition
+     * @return bool
+     * @throws DriveNotDefined
+     * @throws FilesystemException
+     * @throws InvalidSettingException
+     * @throws MissingAwsS3Bucket
+     * @throws MissingAwsS3Setting
+     */
+    public function exists(string $path, ?string $partition = null): bool
+    {
+        $this->setupDriveSettings();
+
+        return $this->filesystem->fileExists($path);
     }
 
     /**

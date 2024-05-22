@@ -2,6 +2,7 @@
 
 namespace AwsStorage;
 
+use AwsStorage\S3Storage\Exceptions\MissingAwsS3Setting;
 use Stellar\Settings\Exceptions\InvalidSettingException;
 use Stellar\Storage;
 
@@ -55,5 +56,19 @@ class S3Storage extends Storage
     public static function drive(string $drive): S3Drive
     {
         return (new S3Drive(drive: $drive));
+    }
+
+    /**
+     * @param string $path
+     * @return string|bool
+     * @throws InvalidSettingException
+     * @throws S3Drive\Exceptions\FailedToGetS3Object
+     * @throws S3Storage\Exceptions\MissingAwsS3Bucket
+     * @throws Storage\Exceptions\DriveNotDefined
+     * @throws MissingAwsS3Setting
+     */
+    public static function get(string $path): string|bool
+    {
+        return (new S3Drive)->get($path);
     }
 }

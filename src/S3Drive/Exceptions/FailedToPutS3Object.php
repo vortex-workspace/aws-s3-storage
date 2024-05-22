@@ -6,12 +6,12 @@ use Monolog\Level;
 use Stellar\Throwable\Exceptions\Contracts\Exception;
 use Stellar\Throwable\Exceptions\Enum\ExceptionCode;
 
-class FailedToGetS3Object extends Exception
+class FailedToPutS3Object extends Exception
 {
     function __construct(string $path, string $message)
     {
         parent::__construct(
-            "Failed to get Aws S3 object from path \"$path\". response: \"$message\".",
+            "Failed to put Aws S3 object from path \"$path\". response: \"$message\".",
             ExceptionCode::NON_CATCH_EXCEPTION,
             Level::Error
         );
