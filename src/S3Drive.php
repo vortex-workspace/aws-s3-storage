@@ -7,6 +7,7 @@ use Aws\S3\S3Client;
 use AwsStorage\S3Drive\Exceptions\FailedToDeleteS3Object;
 use AwsStorage\S3Drive\Exceptions\FailedToGetS3Object;
 use AwsStorage\S3Drive\Exceptions\FailedToGetS3ObjectMimeType;
+use AwsStorage\S3Drive\Exceptions\FailedToGetS3ObjectSize;
 use AwsStorage\S3Drive\Exceptions\FailedToGetUrlFromS3Object;
 use AwsStorage\S3Drive\Exceptions\FailedToPutS3Object;
 use AwsStorage\S3Drive\Traits\Appends;
@@ -225,6 +226,30 @@ class S3Drive extends StorageDrive
         $this->setupDriveSettings();
 
         return $this->filesystem->fileExists($path);
+    }
+
+    /**
+     * @param string $path
+     * @return bool|int
+     * @throws DriveNotDefined
+     * @throws FailedToGetS3ObjectSize
+     * @throws InvalidSettingException
+     * @throws MissingAwsS3Bucket
+     * @throws MissingAwsS3Setting
+     */
+    public function size(string $path): bool|int
+    {
+        $this->setupDriveSettings();
+
+        try {
+            return $this->filesystem->fileSize($path);
+        } catch (FilesystemException|ClientException|S3Exception|UnableToReadFile $exception) {
+            if ($this->exception_mode === true) {
+                throw new FailedToGetS3ObjectSize($path, $exception->getMessage());
+            }
+
+            return false;
+        }
     }
 
     /**

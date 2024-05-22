@@ -20,4 +20,9 @@ class S3StorageProvider extends Provider
             StorageS3Gateway::class,
         ];
     }
+
+    public static function settings(): array
+    {
+        return [__DIR__ . '/../settings/s3.php'];
+    }
 }

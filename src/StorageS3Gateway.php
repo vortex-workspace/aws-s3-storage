@@ -2,6 +2,7 @@
 
 namespace AwsStorage;
 
+use ReflectionException;
 use Stellar\Adapters\StorageAdapter;
 use Stellar\Gateway;
 use Stellar\Gateway\Method;
@@ -13,6 +14,10 @@ class StorageS3Gateway extends Gateway
         return StorageAdapter::class;
     }
 
+    /**
+     * @return array|Method[]
+     * @throws ReflectionException
+     */
     public static function staticMethods(): array
     {
         return [

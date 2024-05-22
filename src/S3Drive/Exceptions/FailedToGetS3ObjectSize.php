@@ -1,17 +1,17 @@
 <?php
 
-namespace AwsStorage\S3Storage\Exceptions;
+namespace AwsStorage\S3Drive\Exceptions;
 
 use Monolog\Level;
 use Stellar\Throwable\Exceptions\Contracts\Exception;
 use Stellar\Throwable\Exceptions\Enum\ExceptionCode;
 
-class MissingAwsS3Bucket extends Exception
+class FailedToGetS3ObjectSize extends Exception
 {
-    function __construct()
+    function __construct(string $path, string $message)
     {
         parent::__construct(
-            "Missing Aws S3 bucket.",
+            "Failed to get Aws S3 object size from path \"$path\". response: \"$message\".",
             ExceptionCode::NON_CATCH_EXCEPTION,
             Level::Error
         );
