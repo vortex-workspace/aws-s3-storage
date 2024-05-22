@@ -20,7 +20,9 @@
     }
   },
   "require": {
-    "php": "^8.3"
+    "php": "^8.3",
+    "league/flysystem-aws-s3-v3": "~3.27.0",
+    "aws/aws-sdk-php": "~3.306.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~10.5.0"
@@ -28,7 +30,7 @@
   "extra": {
     "vortex": {
       "providers": [
-        
+        "AwsStorage\\S3StorageProvider"
       ]
     }
   }
